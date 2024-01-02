@@ -1,6 +1,14 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using Serca.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load kestrel configuration (for the development environment, it is only loaded if the profile explicitly declares it)
+if (builder.Configuration["SERCA_USE_REEL_CERT"] == "true")
+{
+    builder.WebHost.UseKestrel(so => so.ConfigureEndpoints());
+}
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

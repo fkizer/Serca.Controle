@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>889b6a3e-a068-4479-a000-d9c961ecb967</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\dependencies\Serca.Libraries\Serca.AspNetCore\Serca.AspNetCore.csproj" />
     <ProjectReference Include="..\Client\Serca.Controle.UI.Blazor.Client.csproj" />
     <ProjectReference Include="..\Shared\Serca.Controle.UI.Blazor.Shared.csproj" />
   </ItemGroup>
