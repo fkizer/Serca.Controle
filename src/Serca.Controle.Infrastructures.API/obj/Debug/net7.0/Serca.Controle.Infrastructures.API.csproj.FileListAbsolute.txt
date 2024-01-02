@@ -1,0 +1,12 @@
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\bin\Debug\net7.0\Serca.Controle.Infrastructures.API.deps.json
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\bin\Debug\net7.0\Serca.Controle.Infrastructures.API.dll
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\bin\Debug\net7.0\Serca.Controle.Infrastructures.API.pdb
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\obj\Debug\net7.0\Serca.Controle.Infrastructures.API.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\obj\Debug\net7.0\Serca.Controle.Infrastructures.API.AssemblyInfoInputs.cache
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\obj\Debug\net7.0\Serca.Controle.Infrastructures.API.AssemblyInfo.cs
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\obj\Debug\net7.0\Serca.Controle.Infrastructures.API.csproj.CoreCompileInputs.cache
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\obj\Debug\net7.0\Serca.Controle.Infrastructures.API.sourcelink.json
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\obj\Debug\net7.0\Serca.Controle.Infrastructures.API.dll
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\obj\Debug\net7.0\refint\Serca.Controle.Infrastructures.API.dll
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\obj\Debug\net7.0\Serca.Controle.Infrastructures.API.pdb
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Infrastructures.API\obj\Debug\net7.0\ref\Serca.Controle.Infrastructures.API.dll

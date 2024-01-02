@@ -1,0 +1,12 @@
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\bin\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.deps.json
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\bin\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.dll
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\bin\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.pdb
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\obj\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\obj\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.AssemblyInfoInputs.cache
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\obj\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.AssemblyInfo.cs
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\obj\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.csproj.CoreCompileInputs.cache
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\obj\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.sourcelink.json
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\obj\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.dll
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\obj\Debug\net7.0\refint\Serca.Controle.UI.Blazor.Shared.dll
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\obj\Debug\net7.0\Serca.Controle.UI.Blazor.Shared.pdb
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.UI.Blazor\Shared\obj\Debug\net7.0\ref\Serca.Controle.UI.Blazor.Shared.dll

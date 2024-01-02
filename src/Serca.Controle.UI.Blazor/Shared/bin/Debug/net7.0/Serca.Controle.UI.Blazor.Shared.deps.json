@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "Serca.Controle.UI.Blazor.Shared/1.0.0": {
+        "runtime": {
+          "Serca.Controle.UI.Blazor.Shared.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Serca.Controle.UI.Blazor.Shared/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

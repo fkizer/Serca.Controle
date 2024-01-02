@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "LSSqOjVLml6rmW/vDdXYhny0C6a1yd7gfyknzRYzzpioqz5L5Nt04opANOEc30d+h1RiikuAp2/TiUeDrIl/Hg==",
+  "success": true,
+  "projectFilePath": "C:\\Dev\\sercainformatique\\Serca.Controle\\dependencies\\Repository\\src\\Serca.DataAccess.Repository.Core\\Serca.DataAccess.Repository.Core.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\fz.elaatifi\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\8.0.0\\microsoft.extensions.caching.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\fz.elaatifi\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\8.0.0\\microsoft.extensions.dependencyinjection.8.0.0.nupkg.sha512",
+    "C:\\Users\\fz.elaatifi\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\fz.elaatifi\\.nuget\\packages\\microsoft.extensions.options\\8.0.0\\microsoft.extensions.options.8.0.0.nupkg.sha512",
+    "C:\\Users\\fz.elaatifi\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Serca.Controle.UI.Blazor.Client.props" />
+</Project>

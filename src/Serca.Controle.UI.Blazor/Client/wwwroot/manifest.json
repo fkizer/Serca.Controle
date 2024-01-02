@@ -1,0 +1,16 @@
+{
+  "name": "Serca.Controle.UI.Blazor",
+  "short_name": "Serca.Controle.UI.Blazor",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#03173d",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

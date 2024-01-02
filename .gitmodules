@@ -1,0 +1,3 @@
+[submodule "dependencies/Serca.Libraries"]
+	path = dependencies/Serca.Libraries
+	url = https://github.com/sercainformatique/Serca.Libraries.git

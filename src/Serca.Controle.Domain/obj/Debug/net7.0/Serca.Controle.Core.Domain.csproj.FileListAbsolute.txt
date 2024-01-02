@@ -1,0 +1,12 @@
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\bin\Debug\net7.0\Serca.Controle.Core.Domain.deps.json
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\bin\Debug\net7.0\Serca.Controle.Core.Domain.dll
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\bin\Debug\net7.0\Serca.Controle.Core.Domain.pdb
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\obj\Debug\net7.0\Serca.Controle.Core.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\obj\Debug\net7.0\Serca.Controle.Core.Domain.AssemblyInfoInputs.cache
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\obj\Debug\net7.0\Serca.Controle.Core.Domain.AssemblyInfo.cs
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\obj\Debug\net7.0\Serca.Controle.Core.Domain.csproj.CoreCompileInputs.cache
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\obj\Debug\net7.0\Serca.Controle.Core.Domain.sourcelink.json
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\obj\Debug\net7.0\Serca.Controle.Core.Domain.dll
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\obj\Debug\net7.0\refint\Serca.Controle.Core.Domain.dll
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\obj\Debug\net7.0\Serca.Controle.Core.Domain.pdb
+C:\Dev\sercainformatique\Serca.Controle\src\Serca.Controle.Domain\obj\Debug\net7.0\ref\Serca.Controle.Core.Domain.dll

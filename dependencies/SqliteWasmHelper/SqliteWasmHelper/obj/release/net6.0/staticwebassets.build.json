@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "Hash": "fRPxzisrWvQNKXwJ84FiwWvkFGzw6pev7xWw4Ax6BGE=",
+  "Source": "SqliteWasmHelper",
+  "BasePath": "_content/SqliteWasmHelper",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "SqliteWasmHelper\\wwwroot",
+      "Source": "SqliteWasmHelper",
+      "ContentRoot": "C:\\Dev\\Serca.PLI\\dependencies\\SqliteWasmHelper\\SqliteWasmHelper\\wwwroot\\",
+      "BasePath": "_content/SqliteWasmHelper",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Dev\\Serca.PLI\\dependencies\\SqliteWasmHelper\\SqliteWasmHelper\\wwwroot\\browserCache.js",
+      "SourceId": "SqliteWasmHelper",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Dev\\Serca.PLI\\dependencies\\SqliteWasmHelper\\SqliteWasmHelper\\wwwroot\\",
+      "BasePath": "_content/SqliteWasmHelper",
+      "RelativePath": "browserCache.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\browserCache.js"
+    }
+  ]
+}
