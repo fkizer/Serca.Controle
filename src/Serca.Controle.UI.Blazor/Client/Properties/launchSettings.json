@@ -6,7 +6,7 @@
     }
   },
     "profiles": {
-        "Serca.PLI.UI.Blazor": {
+        "Serca.Controle.UI.Blazor": {
             "commandName": "Project",
             "dotnetRunMessages": true,
             "launchBrowser": true,
