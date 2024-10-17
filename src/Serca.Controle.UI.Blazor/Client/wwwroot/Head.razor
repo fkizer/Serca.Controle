@@ -1,0 +1,68 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@inject IWebAssemblyHostEnvironment HostEnvironment
+
+<title>@Title</title>
+
+<link href="@ManifestLink" rel="manifest" />
+<link rel="icon" type="image/x-icon" href="@($"{ImagesPathBase}/serca_preparation.png")" />
+<link rel="apple-touch-icon" sizes="192x192" href="@($"{ImagesPathBase}/manifest-icon-192.maskable.png")" />
+<link rel="apple-touch-icon" sizes="512x512" href="@($"{ImagesPathBase}/manifest-icon-512.maskable.png")" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+
+@code
+{
+    protected string DefaultTitle = "Préparation";
+    protected string DefaultImagesPathBase = "images";
+
+    public string Title => GetTitleByEnvironment();
+    public string ManifestLink => GetManifestLinkByEnvironment();
+    public string ImagesPathBase => GetImagesPathBaseByEnvironment(HostEnvironment);
+
+    protected string GetTitleByEnvironment()
+    {
+        string envTag = string.Empty;
+
+        if (HostEnvironment.IsDevelopment())
+        {
+            envTag = " [Dev]";
+        }
+
+        if (HostEnvironment.IsStaging())
+        {
+            envTag = " [Valid]";
+        }
+
+        return $"{DefaultTitle}{envTag}";
+
+    }
+
+    protected string GetManifestLinkByEnvironment()
+    {
+        if (HostEnvironment.IsProduction())
+        {
+            return "manifest.webmanifest";
+        }
+        else
+        {
+            return $"manifest.{HostEnvironment.Environment}.webmanifest";
+        }        
+    }
+
+    protected string GetImagesPathBaseByEnvironment(IWebAssemblyHostEnvironment hostEnvironment)
+        {
+            string envSubPath = string.Empty;
+
+            if (hostEnvironment.IsDevelopment())
+            {
+                envSubPath = "/Development";
+            }
+
+            if (hostEnvironment.IsStaging())
+            {
+                envSubPath = "/Staging";
+            }
+
+            return $"{DefaultImagesPathBase}{envSubPath}";
+        }
+}

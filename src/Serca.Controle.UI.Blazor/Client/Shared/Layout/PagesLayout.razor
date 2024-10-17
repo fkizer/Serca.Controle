@@ -1,0 +1,19 @@
+﻿@using Serca.Controle.UI.Blazor.Client.Services
+@using MudBlazor
+@inherits LayoutComponentBase
+@inject LayoutService LayoutService
+@layout MainLayout
+
+<MudLayout Class="d-flex flex-column flex-grow-1">
+    
+    <AppBar/>
+    
+    <MudMainContent Class="main-content">
+        <Error>
+	        <MudContainer Class="mt-5" MaxWidth="MaxWidth.Medium">
+               @Body
+            </MudContainer>            
+        </Error>
+    </MudMainContent>
+</MudLayout>
+

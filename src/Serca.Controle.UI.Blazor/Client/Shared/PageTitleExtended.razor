@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@inject IJSRuntime JS
+@inject IWebAssemblyHostEnvironment HostEnvironment
+
+<PageTitle>@Title</PageTitle>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "Controle";
+
+    private string AppBarTitle = "Controle";
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (parameters.TryGetValue<string>(nameof(Title), out var value))
+        {
+            AppBarTitle = value;
+            Title = GetTitleByEnvironment() + value;
+        }
+
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeVoidAsync("UpdatePageTitle", AppBarTitle);
+    }
+
+    protected string GetTitleByEnvironment()
+    {
+        string envTag = string.Empty;
+
+        if (HostEnvironment.Environment.Equals("Development"))
+        {
+            envTag = "[Dev] ";
+        }
+
+        if (HostEnvironment.Environment.Equals("Validation"))
+        {
+            envTag = "[Valid] ";
+        }
+
+        return envTag;
+
+    }
+}

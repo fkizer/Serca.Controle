@@ -1,0 +1,14 @@
+﻿
+.home-background {
+    background-image: url("../images/accueil.png");
+    height: 60%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.home-body {
+    height:40%; 
+    width:80%; 
+    margin:auto;
+}

@@ -1,12 +1,117 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+﻿@using Serca.Controle.Core.Application.Services
+@using Serca.Controle.Infrastructures.Logging
+@using Serca.Controle.UI.Blazor.Client.Shared
+@using Serca.Controle.UI.Blazor.Client.Shared.Layout
+@using Serca.Tools.Barecode
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject IJSRuntime JS
+@inject MemoryFlushableTarget MemoryFlashableTarget
+@inject IScanManager ScanManager
+@inject ServerMigrationService ServerMigrationService
+@inject ILogger<App> Logger
+@inject IConfiguration Configuration
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            @if (Configuration.GetValue<bool>("DisabledAuth"))
+            {
+                <RouteView RouteData="@routeData" DefaultLayout="@typeof(PagesLayout)"/>
+            }
+            else
+            {
+
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(PagesLayout)">
+                    <NotAuthorized>
+                        <RedirectLogin />
+                    </NotAuthorized>
+                    <Authorizing>Authentification en cours...</Authorizing>
+                </AuthorizeRouteView>
+            }
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(PagesLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        objRef = DotNetObjectReference.Create(this);
+
+        var authUri = NavigationManager.BaseUri.TrimEnd('/') + Routes.AuthenticationPage;
+        var initUri = NavigationManager.BaseUri.TrimEnd('/') + Routes.InitialisationPage;
+
+        //Add prohibeted
+        NavigationManagerExtended.AddProhibitedPage(authUri + "*");
+
+        // If firt page is not index, adding index at first (exception for Initialisation and Authentication pages)
+        if (NavigationManager.BaseUri.TrimEnd('/') != NavigationManager.Uri.TrimEnd('/') && !NavigationManager.Uri.StartsWith(authUri)&& !NavigationManager.Uri.StartsWith(initUri))
+        {
+            NavigationManagerExtended.AddPageToHistory(NavigationManager.BaseUri);
+        }
+
+        // Add first page to history
+        NavigationManagerExtended.AddPageToHistory(NavigationManager.Uri);
+        NavigationManagerExtended.AddPageToHistory(NavigationManager.Uri);
+
+        NavigationManager.LocationChanged += async (s, e) =>
+        {
+            await MemoryFlashableTarget.FlushDatabase();
+        };
+
+        var migrationAvailable = await ServerMigrationService.GetMigrationIfAvailable();
+        if (ContextService.User != null && !ContextService.User.MigrationPending && (migrationAvailable?.Auto ?? false))
+        {
+            ContextService.User.MigrationPending = true;
+            await ContextService.SaveAsync();
+        }
+
+        if (!string.IsNullOrEmpty(ContextService.User?.WasMigratedTo))
+        {
+            NavigationManager.NavigateTo(ContextService.User.WasMigratedTo);
+            return;
+        }
+
+        if (ContextService.User?.MigrationPending ?? false)
+        {
+            NavigationManager.NavigateTo($"{Routes.Migration}?auto=true");
+            return;
+        }
+    }
+
+    private DotNetObjectReference<App> objRef;
+    private bool jsInitialized;
+
+    [JSInvokable]
+    public void OnScan(string scan)
+    {
+        Console.WriteLine($"Scan {scan}");
+        ScanManager?.OnScanCallBack?.Invoke(scan);
+    }    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Pas toujours fiable a cause de l'asynchrone, donc controlé aussi côté js
+        if (!jsInitialized && objRef != null)
+        {
+            await JSRuntime.InvokeVoidAsync("initSequenceListener", objRef);
+            jsInitialized = true;
+        }
+
+#if BENCHMARK
+        if (firstRender)
+        {
+            var startupDuration = await JS.InvokeAsync<double>("getExecutionTime");
+            Console.WriteLine($"[BENCHMARK] Total startup duration : {startupDuration}ms");
+        }
+#endif
+    }
+}

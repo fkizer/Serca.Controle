@@ -1,0 +1,28 @@
+﻿@page "/authentication"
+@page "/authentication/{action}"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SqliteWasmHelper
+@attribute [AllowAnonymous]
+
+@inject CookiesManager CookieManager
+@inject IBrowserCache BrowserCache
+
+@if(!Initializing && !string.IsNullOrEmpty(Action))
+{
+    <RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="OnLogInSucceeded" OnLogOutSucceeded="OnLogOutSucceeded">
+        <LoggingIn>
+            <p>Connexion en cours...</p>
+        </LoggingIn>
+        <LogOut>
+            <p>Déconnexion en cours...</p>
+        </LogOut>
+        <LogOutSucceeded>
+            <p>Vous avez été déconnecté avec succès.</p>
+            <button @onclick="@(() => { NavigationManager.NavigateTo("/"); })">Accueil</button>
+        </LogOutSucceeded>
+        <LogOutFailed>
+            <p>Erreur durant la déconnexion.</p>
+            <button @onclick="@(() => { NavigationManager.NavigateTo("/"); })">Accueil</button>
+        </LogOutFailed>
+    </RemoteAuthenticatorView>
+}

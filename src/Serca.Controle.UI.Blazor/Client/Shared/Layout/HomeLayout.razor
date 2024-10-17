@@ -1,0 +1,45 @@
+﻿@using Serca.Controle.UI.Blazor.Client.Services
+@using Serca.Controle.UI.Blazor.Client.Themes
+
+@inherits LayoutComponentBase
+@inject LayoutService LayoutService
+@layout MainLayout
+
+<MudLayout Class="white-background"> 
+    <MudAppBar Elevation="0" Dense="true" Color="Color.Transparent">    
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="1" Variant="@DrawerVariant.Responsive" Anchor="Anchor.Right">
+        <DrawerHeader/>
+
+        <NavMenu />
+    </MudDrawer>
+
+    <MudMainContent Class="full-height pa-0">
+        <MudContainer Class="pa-0 full-height" MaxWidth="MaxWidth.Medium">
+            <Error>    
+                <div class="home-background"/>
+                <div class="home-body">
+                    @Body
+                </div>
+            </Error>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code{
+
+    private bool _drawerOpen = false;
+
+    protected override void OnInitialized()
+    {
+        LayoutService.SetBaseTheme(Theme.DefaultTheme());
+    }
+
+    private void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

@@ -9,7 +9,8 @@ namespace Serca.Controle.UI.Blazor.Client.Themes
         {
             var theme = new MudTheme()
             {
-                Palette = CustomLightPalette,
+                PaletteLight = CustomLightPalette,
+                //Palette = CustomLightPalette,
                 PaletteDark = CustomDarkPalette,
                 Shadows = CustomShadows,
                 LayoutProperties = CustomLayoutProperties,
@@ -135,7 +136,7 @@ namespace Serca.Controle.UI.Blazor.Client.Themes
             }
         };
 
-        private static readonly Palette CustomLightPalette = new()
+        private static readonly PaletteLight CustomLightPalette = new()
         {
             Black = Colors.Shades.Black,
             White = Colors.Shades.White,
@@ -157,7 +158,7 @@ namespace Serca.Controle.UI.Blazor.Client.Themes
             Error = "#DD402F",
             ErrorContrastText = Colors.Shades.White,
             ErrorLighten = "#FFEBEE",
-            Dark = Colors.Grey.Darken3,
+            Dark = Colors.Gray.Darken3,
             DarkContrastText = Colors.Shades.White,
             TextPrimary = "#0b384f",
             TextSecondary = new MudColor(Colors.Shades.Black).SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA),
@@ -166,28 +167,28 @@ namespace Serca.Controle.UI.Blazor.Client.Themes
             ActionDisabled = new MudColor(Colors.Shades.Black).SetAlpha(0.26).ToString(MudColorOutputFormats.RGBA),
             ActionDisabledBackground = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA),
             Background = new MudColor("#F4F9FF"),
-            BackgroundGrey = new MudColor("#f6f6f9"),
+            BackgroundGray = new MudColor("#f6f6f9"),
             Surface = "#fff",
             DrawerBackground = Colors.Shades.White,
-            DrawerText = Colors.Grey.Darken3,
-            DrawerIcon = Colors.Grey.Darken2,
+            DrawerText = Colors.Gray.Darken3,
+            DrawerIcon = Colors.Gray.Darken2,
             AppbarBackground = Colors.Shades.White,//"#f7f7f7",
             AppbarText = "#0b384f",
             LinesDefault = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA),
-            LinesInputs = Colors.Grey.Lighten1,
-            TableLines = new MudColor(Colors.Grey.Lighten2).SetAlpha(1.0).ToString(MudColorOutputFormats.RGBA),
+            LinesInputs = Colors.Gray.Lighten1,
+            TableLines = new MudColor(Colors.Gray.Lighten2).SetAlpha(1.0).ToString(MudColorOutputFormats.RGBA),
             TableStriped = new MudColor(Colors.Shades.Black).SetAlpha(0.02).ToString(MudColorOutputFormats.RGBA),
             TableHover = new MudColor(Colors.Shades.Black).SetAlpha(0.04).ToString(MudColorOutputFormats.RGBA),
-            Divider = Colors.Grey.Lighten2,
+            Divider = Colors.Gray.Lighten2,
             DividerLight = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA),
         };
 
-        private static readonly Palette CustomDarkPalette = new()
+        private static readonly PaletteDark CustomDarkPalette = new()
         {
             Primary = "#7e6fff",
             Surface = "#1e1e2d",
             Background = "#1a1a27",
-            BackgroundGrey = "#151521",
+            BackgroundGray = "#151521",
             AppbarText = "#92929f",
             AppbarBackground = "rgba(26,26,39,0.8)",
             DrawerBackground = "#1a1a27",

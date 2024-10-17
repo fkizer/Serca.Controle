@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Title>SQLite WASM Helper for EF Core</Title>
 	  <Description>Helper library for using SQLite with EF Core in the browser on Blazor WebAssembly. Provides
 	  the hooks to store the database in the browser application cache.</Description>   

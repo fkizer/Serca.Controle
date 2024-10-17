@@ -1,0 +1,24 @@
+﻿<MudDialog Style="text-align: center;" ClassActions="d-flex justify-space-around">
+    <DialogContent>
+        <MudText Color="Color.Tertiary" Typo="Typo.body2">@ContentText</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Text" OnClick="Cancel" Color="Color.Tertiary"><u>@CancelButtonText</u></MudButton>
+        <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit" Size="Size.Small">@ButtonText</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string ContentText { get; set; }
+
+    [Parameter] public string ButtonText { get; set; }
+
+    [Parameter] public MudBlazor.Color Color { get; set; }
+
+    [Parameter] public string CancelButtonText { get; set; } = "Annuler";
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}

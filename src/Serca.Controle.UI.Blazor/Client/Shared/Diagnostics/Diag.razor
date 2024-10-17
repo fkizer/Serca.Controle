@@ -1,0 +1,77 @@
+﻿@using Serca.Controle.Core.Application.Configuration
+@using Serca.Controle.UI.Blazor.Client.Services
+
+
+@inject IConfiguration Configuration
+@inject DiagnosticService DiagnosticService
+
+<MudText Class="ma-2" Typo="Typo.h6">Diagnostique</MudText>
+
+<MudButton Class="ma-2" Variant="Variant.Filled" OnClick="() => { DisplayDiags(); }">Démarrer un diagnostique</MudButton>
+
+@if (_Display)
+{
+    @foreach (var diagnosticConfiguration in DiagnosticConfigurations)
+    {
+        @if (diagnosticConfiguration.Services != null && diagnosticConfiguration.Services.Any())
+        {
+            <div>
+                <MudText Class="ma-2" Typo="Typo.subtitle2">@diagnosticConfiguration.Name</MudText>
+
+                @if (!string.IsNullOrEmpty(diagnosticConfiguration.Desc))
+                {
+                    <MudText Class="ma-2">@diagnosticConfiguration.Desc</MudText>
+                }
+
+                <div class="px-5">
+                    @foreach (var service in diagnosticConfiguration.Services)
+                    {
+                        <DiagItem @ref="DiagItemRef" DiagnosticServiceConfiguration="service"/>
+                    }   
+                </div>
+            </div>
+        }
+    }
+}
+
+@code {
+
+    public List<DiagnosticConfiguration> DiagnosticConfigurations { get; set; } = new List<DiagnosticConfiguration>();
+    public List<DiagItem> DiagItems { get; set; } = new List<DiagItem>();
+
+    public DiagItem DiagItemRef { set => DiagItems.Add(value); }
+
+    private bool _Display;
+    private bool _Processing;
+
+    protected override void OnInitialized()
+    {
+        DiagnosticService!.Refresh();
+        DiagnosticConfigurations = DiagnosticService!.DiagnosticConfigurations ?? new();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_Processing)
+        {
+            await RunDiag();
+            _Processing = false;
+            StateHasChanged();
+        }
+    }
+
+    private void DisplayDiags()
+    {
+        _Display = true;
+        //Auto start
+        _Processing = true;
+    }
+
+    private async Task RunDiag()
+    {
+        foreach (var diagItem in DiagItems)
+        {
+            await diagItem.RunDiag();
+        }
+    }
+}

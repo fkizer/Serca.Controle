@@ -47,7 +47,7 @@ builder.Services.AddTransient(typeof(IGenericRepository<DeviceParametersEntity, 
         "Url": "/api/pli/v1/parametre"
         },
         {
-        "Resource": "Serca.PLI.Core.Domain.Entities.PreparateurEntity",
+        "Resource": "Serca.PLI.Core.Domain.Entities.UtilisateurEntity",
         "Url": "/api/pli/v1/preparateurs"
         }
     ]

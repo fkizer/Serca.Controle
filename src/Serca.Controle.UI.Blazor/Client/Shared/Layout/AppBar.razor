@@ -1,0 +1,61 @@
+﻿@using MudBlazor
+@using System.Text
+@using Serca.Controle.UI.Blazor.Client.Services
+
+@inject LayoutService LayoutService
+@inject NavigationManager NavigationManager
+
+<MudAppBar DisableGutters="true">   
+    <MudGrid Justify="Justify.SpaceBetween" Spacing="0" Class="ma-0 pa-0">
+        <MudItem xs=3>            
+            @if (AppBarManager.BackIconButton != default)
+            {
+                <MudIconButton Icon="@AppBarManager.BackIconButton" Style="@_iconStyle" Color="Color.Inherit" OnClick="@AppBarManager.BackButtonAction" />
+            }
+            
+        </MudItem>    
+
+        <MudItem xs=6 Class="d-flex justify-center align-center">
+            <MudText Typo="Typo.h6" Align="Align.Center"><div id="page-title">PREPARATION</div></MudText>
+        </MudItem>
+        
+        <MudItem xs=3 Class="d-flex justify-end">
+            @if (AppBarManager.SyncButtonAction != null)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Sync" Color="Color.Inherit" Class="mr-2" OnClick="@AppBarManager.SyncButtonAction"/>
+            }
+
+            @if (AppBarManager.InfoButtonAction != null)
+            {
+                <MudIconButton Icon="@Icons.Material.Outlined.Info" Color="@AppBarManager.InfoButtonColor" Class="mr-2" OnClick="@AppBarManager.InfoButtonAction"/>
+            }
+
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
+        </MudItem>
+    </MudGrid>     
+</MudAppBar>
+
+<MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="1" Variant="@DrawerVariant.Responsive" Anchor="Anchor.Right">
+    <DrawerHeader/>
+    
+    <NavMenu />
+</MudDrawer>
+
+
+@code {
+    private bool _drawerOpen = false;
+
+    private string _iconStyle => "visibility:" + (NavigationManagerExtended.CanGoBack() ? "visible" : "hidden");
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += (s, e) => { StateHasChanged(); };
+        AppBarManager.ButtonsChanged += (s, e) => { StateHasChanged(); };
+    }
+
+    private async Task ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+        //await MemoryFlashableTarget.FlushDatabase();
+    }
+}

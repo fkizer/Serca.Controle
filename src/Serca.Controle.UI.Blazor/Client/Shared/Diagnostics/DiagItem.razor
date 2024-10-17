@@ -1,0 +1,71 @@
+﻿@using Serca.Controle.Core.Application.Configuration
+@using Serca.Controle.Core.Application.UseCases.RunDiag
+
+<div class="d-flex justify-space-between flex-grow-1 gap-4 my-4">
+    
+    <MudText>@(DiagnosticServiceConfiguration?.Name ?? "diag_name_missing")<br />
+        <i>@(DiagnosticServiceConfiguration?.Url ?? "diag_url_missing")</i>
+    </MudText>
+
+    @if (_Processing)
+    {
+        <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Size="Size.Small" />
+    }
+    else
+    {
+        <div class="d-flex">
+
+            @if (_Result.HasValue)
+            {
+                @if (_Result.Value)
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Style="height:auto"/>
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.RunningWithErrors" Color="Color.Error" Style="height:auto" />
+                }
+            }
+
+            <MudIconButton
+                        Class="pa-0 ml-2"
+                        Icon="@Icons.Material.Filled.Loop" 
+                        Color="Color.Default"
+                        OnClick="@(async () => { await RunDiag(); })" />
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public DiagnosticServiceConfiguration? DiagnosticServiceConfiguration { get; set; } = default!;
+
+    private bool _Processing;
+    private bool? _Result;
+
+    public async Task<bool> RunDiag()
+    {
+        if (string.IsNullOrEmpty(DiagnosticServiceConfiguration?.Url))
+        {
+            return false;
+        }
+        
+        _Processing = true;
+        StateHasChanged();
+
+        var result = await Mediator.Send(new RunDiagCommand() 
+        { 
+            Service = new Core.Domain.Entities.DiagAggregate.DiagServiceEntity() 
+            { 
+                Uri = DiagnosticServiceConfiguration.Url
+            },
+            HttpCodeShouldBeValid = DiagnosticServiceConfiguration.HttpCodeShouldBeValid
+        });
+
+        _Result = result.Success;
+        _Processing = false;
+        StateHasChanged();
+
+        return result.Success;
+    }
+}

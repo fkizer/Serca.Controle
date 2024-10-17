@@ -1,0 +1,194 @@
+﻿@page "/admin"
+@using Microsoft.EntityFrameworkCore
+@using Serca.Controle.Core.Application.Abstraction
+@using Serca.Controle.Core.Application.Abstraction.Services
+@using Serca.Controle.Core.Application.Data
+@using Serca.Controle.Core.Application.Services
+@using Serca.Controle.Core.Domain.Entities
+@using Serca.Controle.UI.Blazor.Client.Shared
+@using Serca.Controle.UI.Blazor.Client.Shared.Diagnostics
+@using Serca.Controle.UI.Blazor.Client.Shared.Dialogs
+@using SqliteWasmHelper
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+
+@inject IDbContextExtendedFactory<ApplicationDbContext> AppDbContextFactory
+@inject AuthManager AuthManager
+@inject IBrowserCache BrowserCache
+@inject IDialogService DialogService
+@inject IWebAssemblyHostEnvironment HostEnvironment
+@inject HttpClient HttpClient
+@inject ILogger<Admin> Logger
+@inject IStorageService StorageService
+@inject UpdateManager UpdateManager
+@inject ServerMigrationService ServerMigrationService
+
+<PageTitleExtended Title="Admin" />
+
+<MudPaper Elevation="0" Outlined="true" Class="pa-4 mb-4">
+    <MudText Class="ma-2" Typo="Typo.h6">Utilisateur</MudText>
+
+    <MudText Class="ma-2">Utilisateur : <b>@ContextService.User?.Userm</b></MudText>
+    @if (ContextService.IsSerigInstance)
+    {
+        <MudText Class="ma-2">Société : <b>@ContextService.SerigProfile?.SocCode</b></MudText>
+        <MudText Class="ma-2">Dépôt : <b>@ContextService.User?.Depo</b></MudText>
+        <MudText Class="ma-2">Host : <b>@ContextService.SerigProfile?.ServerHost</b></MudText>
+        <MudText Class="ma-2">Port : <b>@ContextService.SerigProfile?.ServerPort</b></MudText>
+
+    }
+    else
+    {
+        <MudText Class="ma-2">Société : <b>@ContextService.User?.Ste</b></MudText>
+        <MudText Class="ma-2">Dépôt : <b>@ContextService.User?.Depo</b></MudText>        
+    }
+    <MudText Class="ma-2">Code machine : <b>@partialCodeMachine</b></MudText>
+
+    @if (ContextService.IsPilote)
+    {
+        <MudText Class="ma-2"><b>Compte Pilote</b></MudText>
+    }
+</MudPaper>
+
+<MudPaper Elevation="1" Class="pa-4 mb-4">
+    <MudText Class="ma-2" Typo="Typo.subtitle2">Version de l'application: <strong>@ContextService.Version</strong></MudText>
+    @if (UpdateManager.UpdateAvailable)
+    {
+        <div>
+            <MudButton Class="ma-2" Variant="Variant.Filled" @onclick="UpdateManager.UpdateVersion">Mettre à jour l'application</MudButton>
+        </div>
+    }   
+    <MudButton Class="ma-2" Variant="Variant.Filled" @onclick="ResetAppPopup">Réinitialiser l'application</MudButton>
+</MudPaper>
+
+<MudPaper Elevation="1" Class="pa-4 mb-4 ">
+    <MudText Class="ma-2" Typo="Typo.h6">Database</MudText>
+    <div>
+        <MudButton Class="ma-2" Variant="Variant.Filled" @onclick="@(async () => { await UpdateLink(); })">Télécharger la base</MudButton>
+        <BackupLink @ref="AppDbBackupLinkRef" DbContextType="typeof(ApplicationDbContext)" />
+    </div>
+    <MudButton Class="ma-2" Variant="Variant.Filled" @onclick="@(async () => { await SendDataBase(); })">Envoyer la base</MudButton>
+    <MudButton Class="ma-2" Variant="Variant.Filled" @onclick="@(async () => { await ResetDatabasePopup(); })">Recréer la base</MudButton>
+</MudPaper>
+
+<MudPaper Elevation="1" Class="pa-4 mb-4">
+    <MudText Class="ma-2" Typo="Typo.h6">Logs</MudText>
+    <MudButton Class="ma-2" Variant="Variant.Filled" @onclick="@(() => { NavigationManager.NavigateTo("/logs"); })">Consulter les logs</MudButton>
+</MudPaper>
+
+<MudPaper Elevation="1" Class="pa-4 mb-4">
+    <Diag/>
+</MudPaper>
+
+<ServerMigration />
+
+@if(HostEnvironment.IsDevelopment() || HostEnvironment.IsStaging())
+{
+    <MudButton Class="ma-2" Variant="Variant.Filled" @onclick=@(() => { NavigationManager.NavigateTo("tests"); } )>Tests</MudButton>
+}
+
+
+@code {
+    private BackupLink AppDbBackupLinkRef = null!;
+    private bool isSerig => ContextService.IsSerigInstance;
+    private string? steSerig => ContextService.SerigProfile?.SocCode;
+    private string? partialCodeMachine => ContextService.User?.CodeMachine?.ToString("N").Substring(28);
+
+
+    [CascadingParameter]
+    public Error? Error { get; set; }
+
+    private async Task UpdateLink()
+    {
+        await AppDbBackupLinkRef.RefreshAsync();
+    }
+
+    private async Task ResetDataBase()
+    {
+        Error?.Clear();
+
+        try
+        {
+            var ctx = await AppDbContextFactory.CreateDbContextAsync();
+            var result = await ctx.Database.EnsureDeletedAsync();
+
+            await ctx.Database.MigrateAsync();
+
+            // Permit flush in storage
+            ctx.Traces.Add(Trace.CreateTrace("Database reset"));
+            await ctx.SaveChangesAsync();
+
+            Snackbar.Add($"La base a été recréée.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Error?.ProcessError(ex);
+        }
+    }
+
+    private async Task SendDataBase()
+    {
+        Error?.Clear();
+
+        try
+        {
+            var form = new MultipartFormDataContent();
+
+            var url = await BrowserCache.GenerateDownloadUrlAsync("app.sqlite3");
+            var fileBytes = await HttpClient.GetByteArrayAsync(url);
+
+
+            form.Add(new ByteArrayContent(fileBytes, 0, fileBytes.Length), "File", $"app_{ContextService.User?.Userm}_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}.sqlite3");
+
+            var result = await HttpClient.PostAsync("upload", form);
+            result.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            Error?.ProcessError(ex);
+        }
+    }
+
+    private async Task ResetDatabasePopup()
+    {
+        var contentText = "La réinitialisation de la base de données entraîne la perte des données.";
+
+        var opts = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        };
+
+        var dialog = DialogService.DisplayMessageBox(opts, "Confirmer la réinitialisation de la base de données?", contentText, Color.Warning, "Réinitialiser la base");
+        var result = await dialog.Result;
+
+        if(!result.Canceled)
+        {
+            await ResetDataBase();
+        }
+    }
+
+    private async Task ResetAppPopup()
+    {
+        var contentText = "La réinitialisation de l'application entraîne la perte des données et un code devra être fourni pour pouvoir la réutiliser";
+
+        var opts = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        };
+
+        var dialog = DialogService.DisplayMessageBox(opts, "Confirmer la réinitialisation de l'application?", contentText, Color.Warning, "Réinitialiser l'application");
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await ResetDataBase();
+            await AuthManager.Logout();
+        }
+    }
+
+    private void UpdateApp()
+    {
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
+}

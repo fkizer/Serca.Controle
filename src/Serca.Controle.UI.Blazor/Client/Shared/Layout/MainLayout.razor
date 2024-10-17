@@ -1,0 +1,25 @@
+﻿@using Serca.Controle.UI.Blazor.Client.Services
+@using Serca.Controle.UI.Blazor.Client.Themes
+
+@inherits LayoutComponentBase
+@inject LayoutService LayoutService
+@inject UpdateManager UpdateManager
+
+<MudThemeProvider Theme="@LayoutService.CurrentTheme"/>
+<MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall"/>
+<MudSnackbarProvider Class="snackBar"/>
+
+@Body
+
+<MudScrollToTop Selector="body" TopOffset="20" Class="pb-10">
+    <MudIconButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.ArrowUpward" Color="Color.Dark" Size="Size.Large" />
+</MudScrollToTop>
+
+@code{
+
+    protected override async Task OnInitializedAsync()
+    {
+        LayoutService.SetBaseTheme(Theme.DefaultTheme());
+        await UpdateManager.CheckForUpdate();
+    }
+}

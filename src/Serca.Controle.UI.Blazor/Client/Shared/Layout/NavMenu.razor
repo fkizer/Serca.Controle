@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@inject IWebAssemblyHostEnvironment HostEnvironment
+@inject UpdateManager UpdateManager
+
+<MudNavMenu Bordered="true">
+    @if (UpdateManager.UpdateAvailable)
+    {
+        <MudNavLink OnClick="@UpdateManager.UpdateVersion">
+            <MudBadge Origin="Origin.TopRight" Color="Color.Secondary" Dot="true" Bordered="true">
+            Nouvelle Version
+            </MudBadge>        
+        </MudNavLink>
+    }
+    <MudNavLink Match="NavLinkMatch.All" Class="docs-single-link" Href="">Accueil</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.All" Class="docs-single-link" Href="history">Historique</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.All" Class="docs-single-link" Href="preparateurs">Changer de préparateur</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.All" Class="docs-single-link" Href="admin">Admin</MudNavLink>
+    @if(HostEnvironment.IsDevelopment() || HostEnvironment.IsStaging())
+    {
+        <MudNavLink OnClick="@(() => { Console.WriteLine(NavigationManagerExtended.ToString());})" Class="docs-single-link">Debug Nav Stack</MudNavLink>
+    }
+</MudNavMenu>
+
+@code {
+    protected override void OnInitialized()
+    {
+        UpdateManager.UpdateDetected += (s, e) => StateHasChanged();
+    }
+}

@@ -1,0 +1,44 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="drawer-header">
+    <MudDrawerHeader Dense="true" Class="d-flex justify-center">
+        @if (CanDisplayUserInfo())
+        {
+            if (isSerig)
+            {
+                <MudText Align="Align.Center" Color="Color.Default" Class="d-flex align-center">
+                    <b>@Userm</b>(@steSerig - @Depo)
+                </MudText>
+            }
+            else
+            {
+                <MudText Align="Align.Center" Color="Color.Default" Class="d-flex align-center">
+                    <b>@Userm</b>(@Ste - @Depo)
+                </MudText>                
+            }
+        }
+        else
+        {
+            <MudText Align="Align.Center" Color="Color.Default" Class="d-flex align-center" @onclick="@(() => { NavigationManager.NavigateTo("/"); })">
+                <b>Identifiez-vous</b>
+            </MudText>
+        }
+    </MudDrawerHeader>
+</div>
+
+
+@code {
+
+    private bool CanDisplayUserInfo() => ContextService.User?.IsAuthenticated ?? false;
+
+    private string? Userm => ContextService.User?.Userm;
+    private ushort? Ste =>  ContextService.User?.Ste;
+    private ushort? Depo =>  ContextService.User?.Depo;
+
+    private bool isSerig => ContextService.IsSerigInstance;
+    private string? steSerig => ContextService.SerigProfile?.SocCode;
+
+    protected override void OnInitialized()
+    {
+    }
+}

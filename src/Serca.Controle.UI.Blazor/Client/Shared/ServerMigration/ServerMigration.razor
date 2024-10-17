@@ -1,0 +1,154 @@
+﻿@page "/migration"
+@using Serca.Controle.Core.Application.Configuration
+@using Serca.Controle.Core.Application.Services
+@using Serca.Controle.UI.Blazor.Client.Shared.Diagnostics
+@using System.Web
+
+
+
+@inject IConfiguration Configuration
+@inject ILogger<ServerMigration> Logger
+@inject ServerMigrationService ServerMigrationService
+
+<MudPaper Elevation="1" Class="pa-4 mb-4">
+<MudText Class="ma-2" Typo="Typo.h6">Migration</MudText>
+
+@if(Loading)
+{
+    <MudText Class="ma-2">@_TextLoading</MudText>
+    <div class="d-flex justify-center align-center">
+        <MudProgressLinear Color="Color.Secondary" Indeterminate="true" />
+    </div>
+}
+else if (MainMigration != null)
+{
+        <MudButton Class="ma-2" Variant="Variant.Filled" OnClick="() => { DisplayDiags(); }">@_ButtonActionLabel</MudButton>
+
+        @if (_Display)
+        {
+            @foreach (var diagnosticConfiguration in DiagnosticConfigurations)
+            {
+                @if (diagnosticConfiguration.Services != null && diagnosticConfiguration.Services.Any())
+                {
+                    <div>
+                        <MudText Class="ma-2" Typo="Typo.subtitle2">@diagnosticConfiguration.Name</MudText>
+
+                        @if (!string.IsNullOrEmpty(diagnosticConfiguration.Desc))
+                        {
+                            <MudText Class="ma-2">@diagnosticConfiguration.Desc</MudText>
+                        }
+
+                        <div class="px-5">
+                            @foreach (var service in diagnosticConfiguration.Services)
+                            {
+                                <DiagItem @ref="DiagItemRef" DiagnosticServiceConfiguration="@service" />
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        }
+
+        @if (_CanMigrate.HasValue)
+        {
+            @if (_CanMigrate.Value)
+            {
+                <MudButton Class="ma-2" Variant="Variant.Filled" Color="Color.Warning" @onclick="Migrate">Continuer la migration</MudButton>
+            }
+            else
+            {
+                <MudText Class="ma-2" Color="Color.Error" Typo="Typo.caption">Les tests doivent être au vert avant de pouvoir continuer le processus de migration. Vérifier également qu'il n'y ait pas de préparation en cours.</MudText>
+            }
+        }
+}
+else
+{
+    <MudText Class="ma-2">Pas de migration disponible.</MudText>
+}
+</MudPaper>
+
+@code {
+
+    [CascadingParameter]
+    public Error? Error { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public bool Auto { get; set; }
+
+    protected MigrationConfiguration? MainMigration;
+    protected List<DiagnosticConfiguration> DiagnosticConfigurations { get; set; } = new List<DiagnosticConfiguration>();
+    protected List<DiagItem> DiagItems { get; set; } = new List<DiagItem>();
+    protected DiagItem DiagItemRef { set => DiagItems.Add(value); }
+    protected bool Loading;
+
+    private string _ButtonActionLabel => _Display ? "Relancer les tests de disponibilité de migration" : "Démarrer la migration";
+    private string _TextLoading => Auto ? "Migration en cours. Merci de patientez" : "Recherche de migration en cours";
+    private bool _Display;
+    private bool _Processing;
+    private bool? _CanMigrate;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Loading = true;
+        MainMigration = await ServerMigrationService.GetMigrationIfAvailable(new Uri(NavigationManager.BaseUri).Host);
+        DiagnosticConfigurations = ServerMigrationService.LoadMigrationDiagnostic();
+
+        if (Auto)
+        {
+            Migrate();
+        }
+        Loading = false;
+    }
+
+    private void DisplayDiags()
+    {
+        ContextService.User!.MigrationPending = false;
+        ContextService.Save();
+        _Display = true;
+        //Auto start
+        _Processing = true;
+    }
+
+    private async Task<bool> RunDiag()
+    {
+        var result = true;
+        foreach (var diagItem in DiagItems)
+        {
+            result &= await diagItem.RunDiag();
+        }
+        return result;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_Processing)
+        {
+            _CanMigrate = await RunDiag();
+            _Processing = false;
+            StateHasChanged();
+        }
+    }
+
+    private void Migrate()
+    {
+        if (MainMigration == null) return;
+
+        var dest = MainMigration?.Destination;
+        var src = MainMigration?.Source;
+
+        if(String.IsNullOrWhiteSpace(dest))
+        {
+            Error?.ProcessError("Migration impossible: Erreur de configuration");
+            return;
+        }
+
+        dest = $"https://{dest.TrimEnd('/')}";
+        if (!String.IsNullOrEmpty(src))
+        {
+            src = $"https://{HttpUtility.UrlEncode(src)}";
+        }
+
+        NavigationManager.NavigateTo($"{dest}{Routes.InitialisationPage}?erp={ContextService.User?.Erp}&userm={ContextService.User?.Userm}&password={ContextService.User?.Password}&codeMachine={ContextService.User?.CodeMachine}&source={src}");
+    }
+}

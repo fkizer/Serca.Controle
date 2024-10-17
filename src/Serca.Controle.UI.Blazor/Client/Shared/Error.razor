@@ -1,0 +1,88 @@
+﻿@using Microsoft.Extensions.Logging
+@using Serca.DataAccess.Exceptions
+@using Serca.Tools.Errors
+@inject ILogger<Error> Logger
+@inject NotificationManager NotificationManager;
+
+@if (Messages.Any())
+{
+    <MudContainer>
+        @foreach (var message in Messages)
+        {
+            <MudAlert Class="my-2" Severity="message.Value" ShowCloseIcon="message.Key.Clearable" CloseIconClicked="@(() => { Messages.Remove(message.Key); })">
+                <MudText Class="d-inline">@message.Key.Title</MudText>
+                @if (!string.IsNullOrWhiteSpace(message.Key.Details))
+                {
+                    <MudLink Class="ml-1" @onclick="@(() => { message.Key.DisplayDetails = !message.Key.DisplayDetails; })">@(message.Key.DisplayDetails ? "Masquer les détails" : "Détails")</MudLink>
+                    <MudText Class="@ClassDetail(message.Key.DisplayDetails)">@message.Key.Details</MudText>
+                }
+            </MudAlert>
+        }
+        </MudContainer>
+}
+
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    public Dictionary<ErrorViewModel, Severity> Messages { get; set; } = new Dictionary<ErrorViewModel, Severity>();
+
+    protected override void OnInitialized()
+    {
+        NotificationManager.ProcessNewWebservicesFailOver += (errorVm) =>
+        {
+            ProcessError(errorVm);
+        };
+    }
+
+    protected override void OnParametersSet()
+    {
+        Messages = new Dictionary<ErrorViewModel, Severity>();
+    }
+
+    public void ProcessError(Exception ex)
+    {
+        Logger.LogError(ex, "Error:ProcessError - Type: {Type} Message: {Message}");
+        ProcessError(ex.Message, writeLog: false);
+    }
+
+    public void ProcessError(ProblemDetailsException ex)
+    {
+        Logger.LogError(ex, "Error:ProcessError - Type: {Type} Message: {Message}");
+        ProcessError(new ErrorViewModel() { Title = ex.Details.Title ?? "Une erreur est survenue", Details = ex.Details.Detail ?? ex.Message }, writeLog: false);
+    }
+
+    public void ProcessError(string message, bool writeLog = true, Severity severity = Severity.Error, bool clearable = true)
+    {
+        ProcessError(new ErrorViewModel() { Title = message, Clearable = clearable }, writeLog, severity);
+    }
+
+    public void ProcessError(ErrorViewModel message, bool writeLog = true, Severity severity = Severity.Error)
+    {
+        if (writeLog)
+        {
+            Logger.LogError(message.ToString());
+        }
+        if (!Messages.ContainsKey(message))
+        {
+            Messages.Add(message, severity);
+            StateHasChanged();
+        }
+    }
+
+    public void Clear()
+    {
+        Messages.Clear();
+        StateHasChanged();
+    }
+
+    public bool HasError => Messages.Count() > 0;
+
+    private string ClassDetail(bool display) => display ? "d-block" : "d-none";
+
+}

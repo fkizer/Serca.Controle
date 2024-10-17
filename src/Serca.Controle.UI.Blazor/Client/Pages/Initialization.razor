@@ -1,0 +1,193 @@
+﻿@page "/initialisation"
+@using Serca.Controle.Core.Application.Configuration
+@using Serca.Controle.UI.Blazor.Client.Shared
+
+@attribute [AllowAnonymous]
+
+@inject IContextService ContextService
+@inject IConfiguration Configuration
+@inject CookiesManager CookieManager
+@inject IContextService ContextService
+
+<PageTitleExtended Title="Initialisation" />
+<div class="mt-10 pa-5">
+
+    @if (ContextService.IsSerigInstance)
+    {
+        <SerigInit/>
+    }
+    else
+    {
+        @if (_BlockInitialisation)
+        {
+            <MudPaper Class="mt-10 pa-5 transparent-background" Elevation="0">
+                <MudText Typo="Typo.caption">L'initialisation n'est plus autorisée à cette adresse. Cliquer sur le lien suivant pour accéder à la nouvelle adresse :</MudText>
+                <MudLink Href="@_NewServer" Underline="Underline.Always">@_NewServer</MudLink>
+            </MudPaper>
+        }
+        else
+        {
+            @if (IsMigration)
+            {
+                <MudText Class="" Typo="Typo.caption">
+                    Vous êtes en train de réaliser une migration vers un nouvel hébergement. 
+                    Un compte y est déjà initialisé.
+                    Souhaitez vous le remplacer ou annuler la migration ?</MudText>
+
+                    <div class="mt-10 d-flex flex-column flex-sm-row gap-3">
+                        <MudButton OnClick="@(() => { AuthenticateMigrationMode(); })"
+                               FullWidth="true"
+                               Size="Size.Large"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary">Continuer la migration</MudButton>
+
+
+                        <MudButton OnClick="@(() => { NavigationManager.NavigateTo(Source ?? "/"); })"
+                               FullWidth="true"
+                               Size="Size.Large"
+                               Variant="Variant.Filled"
+                               Color="Color.Error">Annuler</MudButton>
+                    </div>
+            }
+            else
+            {
+                <MudTextField @bind-Value="InitializationCode"
+                            Label="Code d'initalisation :"
+                            Margin="Margin.Dense"
+                            Class="pb-5" />
+
+                <MudButton OnClick="@Authenticate"
+                        FullWidth="true"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary">Initialiser</MudButton>
+            }
+        }        
+    }
+</div>
+
+
+@code
+{
+    [CascadingParameter] Error? Error { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Erp { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Userm { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Password { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? CodeMachine { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Source { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? MigrationEndTo { get; set; }
+
+    public string? InitializationCode { get; set; }
+
+    private bool _BlockInitialisation;
+    private string? _NewServer;
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(MigrationEndTo))
+        {
+            ContextService.User!.WasMigratedTo = MigrationEndTo;
+            ContextService.User!.MigrationPending = false;
+            ContextService.Save();
+            NavigationManager.NavigateTo(MigrationEndTo);
+        }
+    }
+
+    protected bool IsMigration => !String.IsNullOrEmpty(Erp)
+        && !String.IsNullOrEmpty(Userm)
+        && !String.IsNullOrEmpty(Password)
+        && !String.IsNullOrEmpty(CodeMachine);
+
+    protected override void OnInitialized()
+    {
+        if (ContextService?.User?.IsInitialized ?? false)
+        {
+            if (!IsMigration)
+            {
+                NavigationManager.NavigateTo("/");
+                return;
+            }
+        }
+        else if (IsMigration)
+        {
+            AuthenticateMigrationMode();
+        }
+
+        base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        Console.WriteLine($"render - firsr ? {firstRender}");
+    }
+
+    private async Task Authenticate()
+    {
+        Error?.Clear();
+
+        if (string.IsNullOrWhiteSpace(InitializationCode))
+        {
+            Error?.ProcessError("Veuillez saisir un code.");
+            return;
+        }
+
+        try
+        {
+            await ContextService.Login(InitializationCode);
+            NavigationManager.NavigateTo(Routes.LoginPage);
+        }
+        catch (Exception ex)
+        {
+            Error?.ProcessError(ex);
+        }
+    }
+
+    private void AuthenticateMigrationMode()
+    {
+        Error?.Clear();
+
+        try
+        {
+            ContextService.Login(Userm!, Password!, Erp!, CodeMachine!);
+            if( !string.IsNullOrEmpty(Source))
+            {
+                NavigationManager.NavigateTo($"{Source}{Routes.InitialisationPage}?MigrationEndTo={NavigationManager.BaseUri}");
+            }
+            else
+            {
+                NavigationManager.NavigateTo(Routes.LoginPage);
+            }
+        }
+        catch (Exception ex)
+        {
+            Error?.ProcessError(ex);
+        }
+    }
+
+    private void CheckMigrationAvailable()
+    {
+        List<MigrationConfiguration> migrationConfigurations = new List<MigrationConfiguration>();
+        Configuration.Bind("ServerMigration", migrationConfigurations);
+        var currentHost = new Uri(NavigationManager.BaseUri).Host;
+        var availableMigration = migrationConfigurations.Where(x => x.Source?.Contains(currentHost) ?? false).FirstOrDefault();
+        _BlockInitialisation = availableMigration != null;
+        _NewServer = $"https://{availableMigration?.Destination}";
+    }
+}
