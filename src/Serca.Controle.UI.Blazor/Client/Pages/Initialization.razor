@@ -11,58 +11,50 @@
 
 <PageTitleExtended Title="Initialisation" />
 <div class="mt-10 pa-5">
-
-    @if (ContextService.IsSerigInstance)
+    @if (_BlockInitialisation)
     {
-        <SerigInit/>
+        <MudPaper Class="mt-10 pa-5 transparent-background" Elevation="0">
+            <MudText Typo="Typo.caption">L'initialisation n'est plus autorisée à cette adresse. Cliquer sur le lien suivant pour accéder à la nouvelle adresse :</MudText>
+            <MudLink Href="@_NewServer" Underline="Underline.Always">@_NewServer</MudLink>
+        </MudPaper>
     }
     else
     {
-        @if (_BlockInitialisation)
+        @if (IsMigration)
         {
-            <MudPaper Class="mt-10 pa-5 transparent-background" Elevation="0">
-                <MudText Typo="Typo.caption">L'initialisation n'est plus autorisée à cette adresse. Cliquer sur le lien suivant pour accéder à la nouvelle adresse :</MudText>
-                <MudLink Href="@_NewServer" Underline="Underline.Always">@_NewServer</MudLink>
-            </MudPaper>
+            <MudText Class="" Typo="Typo.caption">
+                Vous êtes en train de réaliser une migration vers un nouvel hébergement. 
+                Un compte y est déjà initialisé.
+                Souhaitez vous le remplacer ou annuler la migration ?</MudText>
+
+                <div class="mt-10 d-flex flex-column flex-sm-row gap-3">
+                    <MudButton OnClick="@(() => { AuthenticateMigrationMode(); })"
+                            FullWidth="true"
+                            Size="Size.Large"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary">Continuer la migration</MudButton>
+
+
+                    <MudButton OnClick="@(() => { NavigationManager.NavigateTo(Source ?? "/"); })"
+                            FullWidth="true"
+                            Size="Size.Large"
+                            Variant="Variant.Filled"
+                            Color="Color.Error">Annuler</MudButton>
+                </div>
         }
         else
         {
-            @if (IsMigration)
-            {
-                <MudText Class="" Typo="Typo.caption">
-                    Vous êtes en train de réaliser une migration vers un nouvel hébergement. 
-                    Un compte y est déjà initialisé.
-                    Souhaitez vous le remplacer ou annuler la migration ?</MudText>
+            <MudTextField @bind-Value="InitializationCode"
+                        Label="Code d'initalisation :"
+                        Margin="Margin.Dense"
+                        Class="pb-5" />
 
-                    <div class="mt-10 d-flex flex-column flex-sm-row gap-3">
-                        <MudButton OnClick="@(() => { AuthenticateMigrationMode(); })"
-                               FullWidth="true"
-                               Size="Size.Large"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary">Continuer la migration</MudButton>
-
-
-                        <MudButton OnClick="@(() => { NavigationManager.NavigateTo(Source ?? "/"); })"
-                               FullWidth="true"
-                               Size="Size.Large"
-                               Variant="Variant.Filled"
-                               Color="Color.Error">Annuler</MudButton>
-                    </div>
-            }
-            else
-            {
-                <MudTextField @bind-Value="InitializationCode"
-                            Label="Code d'initalisation :"
-                            Margin="Margin.Dense"
-                            Class="pb-5" />
-
-                <MudButton OnClick="@Authenticate"
-                        FullWidth="true"
-                        Variant="Variant.Filled"
-                        Color="Color.Primary">Initialiser</MudButton>
-            }
-        }        
-    }
+            <MudButton OnClick="@Authenticate"
+                    FullWidth="true"
+                    Variant="Variant.Filled"
+                    Color="Color.Primary">Initialiser</MudButton>
+        }
+    }  
 </div>
 
 
