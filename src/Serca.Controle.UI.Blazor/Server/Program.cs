@@ -180,7 +180,7 @@ partial class Program
             var tokenService = app.ApplicationServices.GetRequiredService<GetTokenService>();
 
             string webserviceServerURI = configuration["WSUrl"];
-            IdsrvToken token = null;
+            IdsrvToken? token = null;
             token = await tokenService.GetToken(configuration, $"wmsserver{erp}");
 
             string requestURI = $"{context.Request.Path.Value}?{newQueryString}";
