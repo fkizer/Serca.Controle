@@ -67,13 +67,13 @@ builder.Logging
 builder.Services.AddOptions();
 builder.Services.AddOidcAuthentication(options =>
 {
-options.ProviderOptions.Authority = idsrv_uri;
-options.ProviderOptions.ClientId = "***";
-options.ProviderOptions.ResponseType = "code";
-options.ProviderOptions.DefaultScopes.Add("***");
-options.ProviderOptions.DefaultScopes.Add("depo");
-options.ProviderOptions.DefaultScopes.Add("logistics");
-options.ProviderOptions.DefaultScopes.Add("offline_access");
+    options.ProviderOptions.Authority = idsrv_uri;
+    options.ProviderOptions.ClientId = "***";
+    options.ProviderOptions.ResponseType = "code";
+    options.ProviderOptions.DefaultScopes.Add("***");
+    options.ProviderOptions.DefaultScopes.Add("depo");
+    options.ProviderOptions.DefaultScopes.Add("logistics");
+    options.ProviderOptions.DefaultScopes.Add("offline_access");
 });
 
 // App stack
@@ -168,6 +168,7 @@ ConfigurationItemFactory.Default.CreateInstance = type =>
 {
 return app[0].Services.GetService(type) ?? builtInProvider(type);
 };
+
 
 var ctx = app[0].Services.GetRequiredService(typeof(IContextService)) as IContextService;
 var authStateProvider = app[0].Services.GetRequiredService(typeof(AuthenticationStateProvider)) as AuthenticationStateProvider;
